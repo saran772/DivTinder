@@ -1,0 +1,22 @@
+{
+  "name": "divtinder",
+  "version": "1.0.0",
+  "description": "for devs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saran772/DivTinder.git"
+  },
+  "author": "auth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saran772/DivTinder/issues"
+  },
+  "homepage": "https://github.com/saran772/DivTinder#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
