@@ -21,7 +21,7 @@ app.post("/user",(req,res)=>{
 })
 
 app.listen(7777,()=>{
-    console.log("data connected succesfully!")
+    console.log("data connected succesfullyyyy!")
 });
 
 
