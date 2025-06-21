@@ -1,30 +1,29 @@
-const express=require("express")
+const express=require("express");
+const { adminauth, userauth } = require("./middleware/auth");
 const app=express();
-//MIDDLEWARES
-app.use("/",(req,res,next)=>{
-    console.log("middleware")
-    next();
-},
-(req,res,next)=>{
-    console.log("route-handlimg-1")
-    next()
-},
-(req,res,next)=>{
-    console.log("route-handlimg-2")
-    next()
-},
-(req,res,next)=>{
-    console.log("route-handlimg-3")
-    res.send("main next")
-}
-)
 
+app.use("/admin",adminauth);
+app.post("/user/login",(req,res)=>{
+    res.send("user logedin succesfully")
+})
+
+app.use("/user",userauth,(req,res)=>{
+    res.send("user data sent")
+})
+
+
+app.get("/admin/getdata",(req,res)=>{
+    res.send("admin data get")
+})
+app.get("/admin/deletedata",(req,res)=>{
+    res.send("admin data delete")
+})
 
 
 
 app.listen(7777,()=>{
     console.log("data connected succesfullyyyy!")
-});
+})
 
 
 //in app.use we've set up route which responds to all the http methods
