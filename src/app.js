@@ -1,24 +1,19 @@
 const express=require("express")
 const app=express();
 
-app.get("/user/:userId/:name/:password",(req,res)=>{
-    console.log(req.params)//use params for dynamically routing
-    res.send({firstname:"saranpreet",lastname:"singh"})
+app.get("/user",(req,res,next)=>{
+    console.log("route handling-1")
+    next()
+},
+app.get("/user",(req,res,next)=>{
+    console.log("route handling-2")
+    next()
+}),
+app.get("/user",(req,res,next)=>{
+    console.log("route handling-3")
+    res.send("3rd router")
+}))// multiple routers
 
-})
-app.put("/user",(req,res)=>{
-    console.log(req.query)//we can read query from postman
-    res.send("data put succefully")
-})
-app.patch("/user",(req,res)=>{
-    res.send("data patch succefully")//we can also give dynamically route
-})
-app.delete("/user",(req,res)=>{
-    res.send("data delete succefully")
-})
-app.post("/user",(req,res)=>{
-    res.send("data send succefully")
-})
 
 app.listen(7777,()=>{
     console.log("data connected succesfullyyyy!")
