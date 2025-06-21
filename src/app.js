@@ -1,18 +1,25 @@
 const express=require("express")
 const app=express();
-
-app.get("/user",(req,res,next)=>{
-    console.log("route handling-1")
+//MIDDLEWARES
+app.use("/",(req,res,next)=>{
+    console.log("middleware")
+    next();
+},
+(req,res,next)=>{
+    console.log("route-handlimg-1")
     next()
 },
-app.get("/user",(req,res,next)=>{
-    console.log("route handling-2")
+(req,res,next)=>{
+    console.log("route-handlimg-2")
     next()
-}),
-app.get("/user",(req,res,next)=>{
-    console.log("route handling-3")
-    res.send("3rd router")
-}))// multiple routers
+},
+(req,res,next)=>{
+    console.log("route-handlimg-3")
+    res.send("main next")
+}
+)
+
+
 
 
 app.listen(7777,()=>{
