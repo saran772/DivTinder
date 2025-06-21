@@ -1,25 +1,28 @@
 const express=require("express");
-const { adminauth, userauth } = require("./middleware/auth");
+
 const app=express();
-
-app.use("/admin",adminauth);
-app.post("/user/login",(req,res)=>{
-    res.send("user logedin succesfully")
+//this is a wildcard error handling but it is not proper(NOT WRITTEN CORRECT VERSION)
+app.use("/",(err,req,res,next)=>{
+    if(err){
+    res.status(500).send("something went wronghh")}
 })
 
-app.use("/user",userauth,(req,res)=>{
-    res.send("user data sent")
+//this is try catch and always use this
+app.get("/user",(req,res)=>{
+    try{
+        throw new error("jhvsjkbf")
+        res.send("user data")
+    }
+    catch(err){
+          res.status(500).send("something went wrong")//ALWAYS USED NEXT(ERR )IN CATCH STATEMENT
+    }
 })
 
-
-app.get("/admin/getdata",(req,res)=>{
-    res.send("admin data get")
+//ITS A GLOBAL ERROR HANDLER ALWAYS WRITTEN AT THE LAST OF THE CODE(NOT WRITTEN CORRECT VERSION)
+app.use("/",(err,req,res,next)=>{
+    if(err){
+    res.status(500).send("something went wronghh")}
 })
-app.get("/admin/deletedata",(req,res)=>{
-    res.send("admin data delete")
-})
-
-
 
 app.listen(7777,()=>{
     console.log("data connected succesfullyyyy!")
