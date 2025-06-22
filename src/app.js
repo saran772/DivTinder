@@ -3,13 +3,9 @@ const {ConnectDb}= require("./config/database");
 const User=require("./models/user")
 
 const app = express();
+app.use(express.json());
 app.post("/signup",async(req,res)=>{
-    const user=new User({       //CREATED A INSTANCE OF A USER MODEL
-        firstName:"rohan",
-        lastName:"singh",
-        emailId:"rohan@123",
-        password:"rohan@123"
-    })
+    const user=new User(req.body)
     try{
          await user.save();
          res.send("data sent succesfully!!")
