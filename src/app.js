@@ -45,7 +45,31 @@ catch(err){
 }
 })
 //get data of only one api in multiple data
-
+app.delete("/user",async(req,res)=>{
+  const userId=req.body._id
+  try{
+    const users=await User.findByIdAndDelete(userId)
+    res.send("data deleted succesfully")
+  }
+  catch(err){
+  res.status(404).send("something went wrongh")
+}
+})
+//delete the api
+app.patch("/user",async(req,res)=>{
+  const userId=req.body._idd
+  const data=req.body
+  try{
+    const user=await User.findByIdAndUpdate(userId,data) //or({_id:userId})
+    console.log(user)
+    res.send("data updated succefully")
+  }
+  catch(err){
+  res.status(404).send("something went wrongh")
+}
+  
+})
+//update api
 
 ConnectDb()
   .then(() => {
