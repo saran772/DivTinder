@@ -14,7 +14,37 @@ app.post("/signup",async(req,res)=>{
         res.status(500).send("error detected"+ err.message)
     }
    
+}) //POST API
+app.get("/user",async(req,res)=>{
+    const useremail=req.body.emailId
+    try{
+      const users=await User.find({ emailId : useremail })
+      if(users.length===0){
+         res.status(400).send("something went wrong")
+      }
+      else{
+      res.send(users)}
+    }
+    catch(err){
+      res.status(404).send("something went wrongh")
+    }
+}) //GET all data of same api
+app.get("/user/one",async(req,res)=>{
+  const useremail=req.body.emailId
+  try{
+  const userss=await User.findOne({emailId : useremail})
+  if(!userss){
+     res.status(400).send("something went wrong")
+  }
+  else{
+    res.send(userss)
+  }
+}
+catch(err){
+  res.status(404).send("something went wrongh")
+}
 })
+//get data of only one api in multiple data
 
 
 ConnectDb()
