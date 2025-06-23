@@ -56,16 +56,28 @@ app.delete("/user",async(req,res)=>{
 }
 })
 //delete the api
-app.patch("/user",async(req,res)=>{
-  const userId=req.body._idd
+app.patch("/user/:userId",async(req,res)=>{
+  const userId=req.params?.userId
   const data=req.body
   try{
-    const user=await User.findByIdAndUpdate(userId,data) //or({_id:userId})
+    const Allowed_Updates=["age","gender","skills"]
+    const isupdate=Object.keys(data).every((k)=>Allowed_Updates.includes(k))
+    if(!isupdate){
+      throw new Error("not updated")
+    }
+    if(data?.skills.length>10){
+       throw new Error("max 10 skills allowed")
+    }
+    const user=await User.findByIdAndUpdate(userId,data,{runValidators:true,new:true})
+     //or({_id:userId})
+     if (!user) {
+    return res.status(404).send("User not found");
+  }
     console.log(user)
     res.send("data updated succefully")
   }
   catch(err){
-  res.status(404).send("something went wrongh")
+  res.status(404).send("something went wrongh" + err.message)
 }
   
 })
@@ -79,5 +91,5 @@ ConnectDb()
     });
   })
   .catch((err) => {
-    console.log("error detected");
+    console.log("error detected"+ err.message);
   });
