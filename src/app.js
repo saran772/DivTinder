@@ -1,20 +1,30 @@
 const express = require("express");
 const {ConnectDb}= require("./config/database");
-const User=require("./models/user")
+const User=require("./models/user");
+const { validatesignup } = require("./utils/validation");
+const bcrypt=require("bcrypt")
 
 const app = express();
 app.use(express.json());
 app.post("/signup",async(req,res)=>{
-    const user=new User(req.body)
     try{
-         await user.save();
-         res.send("data sent succesfully!!")
+      //validate the data
+      validatesignup(req)
+      //incript the data
+      const{firstName,lastName,emailId,password}=req.body;
+      const passwordhash=await bcrypt.hash(password,10); //here 10 is salt
+      console.log(passwordhash)
+      //create a instance new model
+       const user=new User({firstName,lastName,emailId,password:passwordhash})
+      await user.save();
+      res.send("data sent succesfully!!")
     }
     catch(err){
         res.status(500).send("error detected"+ err.message)
     }
    
 }) //POST API
+
 app.get("/user",async(req,res)=>{
     const useremail=req.body.emailId
     try{
