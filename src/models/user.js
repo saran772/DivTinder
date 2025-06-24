@@ -1,4 +1,5 @@
 const mongoose=require("mongoose")
+const validator=require("validator")
 const userschema=new mongoose.Schema({
     firstName:{
         type:String,
@@ -17,10 +18,20 @@ const userschema=new mongoose.Schema({
         unique:true,
         trim:true,
         lowercase:true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("invalid email"+ value)
+            }
+        }
     },
     password:{
         type:String,
         required:true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("create a strong pass"+ value)
+            }
+        }
     },
     age:{
         type:Number
@@ -40,3 +51,5 @@ const userschema=new mongoose.Schema({
     timestamps:true
 })
 module.exports=mongoose.model("user",userschema)
+
+//never trust req.body
