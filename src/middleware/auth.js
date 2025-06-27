@@ -1,23 +1,25 @@
-const adminauth=(req,res,next)=>{
-    console.log("admin auth is checking")
-    const tokens="xyz"
-    const isauthorized= tokens==="xyz"
-    if(!isauthorized){
-        res.status(401).send("unauthorized data")
+const User=require("../models/user")
+const jwt=require("jsonwebtoken")
+ const userauth=async(req,res,next)=>{
+    //read the token from req.cookies
+    //validate the token
+    //find the user with decodeddata
+    try{const {token}=req.cookies;
+    if(!token){
+        throw new Error("token not valid")
     }
-    else{
-        next();
+    const decodeddata=await jwt.verify(token,"devtinder@123")
+    const {_id}=decodeddata
+    const user=await User.findById(_id)
+    if(!user){
+        throw new Error("user not valid")
     }
-}
- const userauth=(req,res,next)=>{
-    console.log("user auth is checking")
-    const tokens="xyz"
-    const isauthorized= tokens==="xyz"
-    if(!isauthorized){
-        res.status(401).send("unauthorized data")
+    req.user=user
+   next()
     }
-    else{
-        next();
+     catch(err){
+      res.status(400).send("something went wrongh")
+    } 
     }
-}
-module.exports={adminauth,userauth}
+
+module.exports={userauth}

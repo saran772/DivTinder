@@ -3,9 +3,12 @@ const {ConnectDb}= require("./config/database");
 const User=require("./models/user");
 const { validatesignup } = require("./utils/validation");
 const bcrypt=require("bcrypt")
-
+const cookieParser = require("cookie-parser");
+const jwt=require("jsonwebtoken")
+const{userauth}=require("./middleware/auth")
 const app = express();
 app.use(express.json());
+app.use(cookieParser())
 app.post("/signup",async(req,res)=>{
     try{
       //validate the data
@@ -13,13 +16,14 @@ app.post("/signup",async(req,res)=>{
       //incript the data
       const{firstName,lastName,emailId,password}=req.body;
       const passwordhash=await bcrypt.hash(password,10); //here 10 is salt
-      console.log(passwordhash)
       //create a instance new model
        const user=new User({firstName,lastName,emailId,password:passwordhash})
+      
       await user.save();
       res.send("data sent succesfully!!")
     }
     catch(err){
+    
         res.status(500).send("error detected"+ err.message)
     }
    
@@ -31,8 +35,11 @@ app.post("/login",async(req,res)=>{
     if(!user){
       throw new Error("user not found")
     }
-const ispasswordcheck=await bcrypt.compare(password,user.password)
+const ispasswordcheck=await user.validatepassword(password)
 if(ispasswordcheck){
+  //create a jwt token
+  const token=await user.getJWT()//expire token in 1 day
+  res.cookie("token",token,{expires:new Date(Date.now() + 8*3600000)})//expire cookie
   res.send("login succesfully!!!")
 }
 else{
@@ -44,73 +51,20 @@ else{
 
   }
 })
-app.get("/user",async(req,res)=>{
-    const useremail=req.body.emailId
-    try{
-      const users=await User.find({ emailId : useremail })
-      if(users.length===0){
-         res.status(400).send("something went wrong")
-      }
-      else{
-      res.send(users)}
-    }
-    catch(err){
+app.get("/profile",userauth,async(req,res)=>{
+ try{
+  const user=req.user
+res.send(user)
+ }
+
+  catch(err){
       res.status(404).send("something went wrongh")
-    }
-}) //GET all data of same api
-app.get("/user/one",async(req,res)=>{
-  const useremail=req.body.emailId
-  try{
-  const userss=await User.findOne({emailId : useremail})
-  if(!userss){
-     res.status(400).send("something went wrong")
-  }
-  else{
-    res.send(userss)
-  }
-}
-catch(err){
-  res.status(404).send("something went wrongh")
-}
+    } 
 })
-//get data of only one api in multiple data
-app.delete("/user",async(req,res)=>{
-  const userId=req.body._id
-  try{
-    const users=await User.findByIdAndDelete(userId)
-    res.send("data deleted succesfully")
-  }
-  catch(err){
-  res.status(404).send("something went wrongh")
-}
+app.post("/sendconnectionrequest",userauth,async(req,res)=>{
+  const user=req.user
+  res.send(user.firstName + ": sent coonection request")
 })
-//delete the api
-app.patch("/user/:userId",async(req,res)=>{
-  const userId=req.params?.userId
-  const data=req.body
-  try{
-    const Allowed_Updates=["age","gender","skills"]
-    const isupdate=Object.keys(data).every((k)=>Allowed_Updates.includes(k))
-    if(!isupdate){
-      throw new Error("not updated")
-    }
-    if(data?.skills.length>10){
-       throw new Error("max 10 skills allowed")
-    }
-    const user=await User.findByIdAndUpdate(userId,data,{runValidators:true,new:true})
-     //or({_id:userId})
-     if (!user) {
-    return res.status(404).send("User not found");
-  }
-    console.log(user)
-    res.send("data updated succefully")
-  }
-  catch(err){
-  res.status(404).send("something went wrongh" + err.message)
-}
-  
-})
-//update api
 
 ConnectDb()
   .then(() => {
