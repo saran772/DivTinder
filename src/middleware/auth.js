@@ -4,7 +4,8 @@ const jwt=require("jsonwebtoken")
     //read the token from req.cookies
     //validate the token
     //find the user with decodeddata
-    try{const {token}=req.cookies;
+    try{
+        const {token}=req.cookies;
     if(!token){
         throw new Error("token not valid")
     }
