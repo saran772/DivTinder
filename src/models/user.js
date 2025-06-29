@@ -43,11 +43,14 @@ const userschema=new mongoose.Schema({
     },
     gender:{
         type:String,
-        validate(value){
-            if(!["male","female","others"].includes(value)){    //validate only new obj not the existing one
-                throw new Error("Gender not valid")
-            }
+        enum:{
+            values:["male","female","other"]
         }
+        // validate(value){
+        //     if(!["male","female","others"].includes(value)){    //validate only new obj not the existing one
+        //         throw new Error("Gender not valid")
+        //     }
+        // }
     }
 },{
     timestamps:true
