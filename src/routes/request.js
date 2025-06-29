@@ -30,7 +30,7 @@ requestRouter.post("/send/request/:status/:touserId", userauth, async (req, res)
                 { fromuserId: touserId, touserid: fromuserId }
             ]
         });
-        
+
 
         if (checkExistingReq) {
             return res.status(400).json({ message: "Request has been sent already!!" });
@@ -51,5 +51,39 @@ requestRouter.post("/send/request/:status/:touserId", userauth, async (req, res)
         return res.status(400).json({ message: "Error: " + err.message });
     }
 });
+requestRouter.post("/review/request/:status/:requestId", userauth, async (req, res) => {
+    try {
+        const loggedInUser = req.user;
+        const { status, requestId } = req.params;
+
+        const allowed = ["accepted", "rejected"];
+        if (!allowed.includes(status)) {
+            return res.status(400).json({ message: "Status is not valid" });
+        }
+
+        const connectionReq = await ConnectionRequestModel.findOne({
+            _id: requestId,
+            touserid: loggedInUser._id,
+            status: "interested"
+        });
+
+        if (!connectionReq) {
+            return res.status(400).json({ message: "Request not found or not valid" });
+        }
+
+        // Update status before saving
+        connectionReq.status = status;
+        const data = await connectionReq.save();
+
+        res.json({
+            message: `Request has been ${status}`,
+            data
+        });
+
+    } catch (err) {
+        res.status(400).send("Error: " + err.message);
+    }
+});
+
 
 module.exports = requestRouter;
