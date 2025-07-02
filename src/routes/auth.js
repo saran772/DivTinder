@@ -39,7 +39,7 @@ if(ispasswordcheck){
   //create a jwt token
   const token=await user.getJWT()//expire token in 1 day
   res.cookie("token",token,{expires:new Date(Date.now() + 8*3600000)})//expire cookie
-  res.send("login succesfully!!!")
+  res.send(user);
 }
 else{
   throw new Error("pass not correct")
